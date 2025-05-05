@@ -77,7 +77,7 @@ pip install -r requirements.txt
 
 ---
 
-## ⚙️ Starting
+## 🚀 Starting
 ```text
 python main.py \
     --train_csv ./Data/train.csv \

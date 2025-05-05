@@ -192,17 +192,39 @@ class KidneySliceDataset(Dataset):
             실험실 값 리스트
         """
         baseline_cr = float(self.df.loc[patient_idx, 'Baseline_Cr_log'])
-        cr_48h = float(self.df.loc[patient_idx, 'Cr_48h'])
-        age = float(self.df.loc[patient_idx, 'AGE'])
-        sex = float(self.df.loc[patient_idx, 'SEX'])
-        MeshVolume = float(self.df.loc[patient_idx, 'original_shape_MeshVolume'])
-        Sphericity = float(self.df.loc[patient_idx, 'original_shape_Sphericity'])
-        Thickness_Mean = float(self.df.loc[patient_idx, 'local_thickness_mean'])
+
+        SEX = float(self.df.loc[patient_idx, 'SEX'])
+        AGE = float(self.df.loc[patient_idx, 'AGE'])
+        BMI = float(self.df.loc[patient_idx, 'BMI'])
         BUN = float(self.df.loc[patient_idx, 'BUN'])
+        Hb = float(self.df.loc[patient_idx, 'Hb'])
         Albumin = float(self.df.loc[patient_idx, 'Albumin'])
-        HTN = float(self.df.loc[patient_idx, 'HTN'])
+        P = float(self.df.loc[patient_idx, 'P'])
+        Ca = float(self.df.loc[patient_idx, 'Ca'])
+        tCO2 = float(self.df.loc[patient_idx, 'tCO2'])
+        K = float(self.df.loc[patient_idx, 'K'])
+        Cr_48h_log = float(self.df.loc[patient_idx, 'Cr_48h_log'])
+
+        original_shape_SurfaceVolumeRatio = float(self.df.loc[patient_idx, 'original_shape_SurfaceVolumeRatio'])
+        original_shape_Sphericity = float(self.df.loc[patient_idx, 'original_shape_Sphericity'])
+        original_shape_Maximum3DDiameter = float(self.df.loc[patient_idx, 'original_shape_Maximum3DDiameter'])
+        original_shape_Maximum2DDiameterColumn = float(self.df.loc[patient_idx, 'original_shape_Maximum2DDiameterColumn'])
+        original_shape_MinorAxisLength = float(self.df.loc[patient_idx, 'original_shape_MinorAxisLength'])
+        original_shape_LeastAxisLength = float(self.df.loc[patient_idx, 'original_shape_LeastAxisLength'])
+        original_shape_Elongation = float(self.df.loc[patient_idx, 'original_shape_Elongation'])
+        original_shape_Flatness = float(self.df.loc[patient_idx, 'original_shape_Flatness'])
+        local_thickness_mean = float(self.df.loc[patient_idx, 'local_thickness_mean'])
+        convexity_ratio_area = float(self.df.loc[patient_idx, 'convexity_ratio_area'])
+        convexity_ratio_vol = float(self.df.loc[patient_idx, 'convexity_ratio_vol'])
+        original_shape_MeshVolume = float(self.df.loc[patient_idx, 'original_shape_MeshVolume'])
+
         
-        return [baseline_cr, cr_48h, age, sex, MeshVolume, Sphericity, Thickness_Mean, BUN, Albumin, HTN]
+        return [baseline_cr, SEX, AGE, BMI, BUN, Hb, Albumin, P, Ca, tCO2, K,
+                Cr_48h_log, original_shape_SurfaceVolumeRatio, original_shape_Sphericity,
+                original_shape_Maximum3DDiameter, original_shape_Maximum2DDiameterColumn,
+                original_shape_MinorAxisLength, original_shape_LeastAxisLength,
+                original_shape_Elongation, original_shape_Flatness, local_thickness_mean,
+                convexity_ratio_area, convexity_ratio_vol, original_shape_MeshVolume]
 
 
 class TestKidneySliceDataset(Dataset):
@@ -396,14 +418,36 @@ class TestKidneySliceDataset(Dataset):
             실험실 값 리스트
         """
         baseline_cr = float(self.df.loc[patient_idx, 'Baseline_Cr_log'])
-        cr_48h = float(self.df.loc[patient_idx, 'Cr_48h'])
-        age = float(self.df.loc[patient_idx, 'AGE'])
-        sex = float(self.df.loc[patient_idx, 'SEX'])
-        MeshVolume = float(self.df.loc[patient_idx, 'original_shape_MeshVolume'])
-        Sphericity = float(self.df.loc[patient_idx, 'original_shape_Sphericity'])
-        Thickness_Mean = float(self.df.loc[patient_idx, 'local_thickness_mean'])
+
+        SEX = float(self.df.loc[patient_idx, 'SEX'])
+        AGE = float(self.df.loc[patient_idx, 'AGE'])
+        BMI = float(self.df.loc[patient_idx, 'BMI'])
         BUN = float(self.df.loc[patient_idx, 'BUN'])
+        Hb = float(self.df.loc[patient_idx, 'Hb'])
         Albumin = float(self.df.loc[patient_idx, 'Albumin'])
-        HTN = float(self.df.loc[patient_idx, 'HTN'])
+        P = float(self.df.loc[patient_idx, 'P'])
+        Ca = float(self.df.loc[patient_idx, 'Ca'])
+        tCO2 = float(self.df.loc[patient_idx, 'tCO2'])
+        K = float(self.df.loc[patient_idx, 'K'])
+        Cr_48h_log = float(self.df.loc[patient_idx, 'Cr_48h_log'])
+
+        original_shape_SurfaceVolumeRatio = float(self.df.loc[patient_idx, 'original_shape_SurfaceVolumeRatio'])
+        original_shape_Sphericity = float(self.df.loc[patient_idx, 'original_shape_Sphericity'])
+        original_shape_Maximum3DDiameter = float(self.df.loc[patient_idx, 'original_shape_Maximum3DDiameter'])
+        original_shape_Maximum2DDiameterColumn = float(self.df.loc[patient_idx, 'original_shape_Maximum2DDiameterColumn'])
+        original_shape_MinorAxisLength = float(self.df.loc[patient_idx, 'original_shape_MinorAxisLength'])
+        original_shape_LeastAxisLength = float(self.df.loc[patient_idx, 'original_shape_LeastAxisLength'])
+        original_shape_Elongation = float(self.df.loc[patient_idx, 'original_shape_Elongation'])
+        original_shape_Flatness = float(self.df.loc[patient_idx, 'original_shape_Flatness'])
+        local_thickness_mean = float(self.df.loc[patient_idx, 'local_thickness_mean'])
+        convexity_ratio_area = float(self.df.loc[patient_idx, 'convexity_ratio_area'])
+        convexity_ratio_vol = float(self.df.loc[patient_idx, 'convexity_ratio_vol'])
+        original_shape_MeshVolume = float(self.df.loc[patient_idx, 'original_shape_MeshVolume'])
+
         
-        return [baseline_cr, cr_48h, age, sex, MeshVolume, Sphericity, Thickness_Mean, BUN, Albumin, HTN]
+        return [baseline_cr, SEX, AGE, BMI, BUN, Hb, Albumin, P, Ca, tCO2, K,
+                Cr_48h_log, original_shape_SurfaceVolumeRatio, original_shape_Sphericity,
+                original_shape_Maximum3DDiameter, original_shape_Maximum2DDiameterColumn,
+                original_shape_MinorAxisLength, original_shape_LeastAxisLength,
+                original_shape_Elongation, original_shape_Flatness, local_thickness_mean,
+                convexity_ratio_area, convexity_ratio_vol, original_shape_MeshVolume]
