@@ -6,34 +6,24 @@ from typing import Tuple, Optional
 
 
 class TabPFNFeatureExtractor(nn.Module):
-    """TabPFN을 사용하여 표 형식 데이터에서 특징을 추출하는 모듈"""
-    def __init__(self, output_dim: int = 64):
-        """
-        초기화 메서드
-        
-        Args:
-            output_dim: 출력 특징 차원
-        """
+    """
+    TabPFN을 사용하여 표 형식 데이터에서 특징을 추출하는 모듈
+    """
+    def __init__(self, output_dim=64):
         super().__init__()
         self.tabpfn = TabPFNRegressor()
         self.output_dim = output_dim
         self.is_trained = False
         
-    def fit(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-        """
-        TabPFN 모델 학습 메서드
-        
-        Args:
-            X_train: 학습 특징 데이터
-            y_train: 학습 타겟 데이터
-        """
+    def fit(self, X_train, y_train):
+        """TabPFN 모델 학습"""
         self.tabpfn.fit(X_train, y_train)
         self.is_trained = True
         print("TabPFN 모델 학습 완료!")
         
-    def forward(self, lab_values: torch.Tensor) -> torch.Tensor:
+    def forward(self, lab_values):
         """
-        lab_values에서 TabPFN 특징 추출 메서드
+        lab_values에서 TabPFN 특징 추출
         
         Args:
             lab_values: 배치의 임상 데이터 [batch_size, 10]
@@ -51,19 +41,16 @@ class TabPFNFeatureExtractor(nn.Module):
         # TabPFN에서 특징 추출 (내부 표현을 특징으로 사용)
         N, D = unique_lab.shape
         
-        # TabPFN의 내부 예측 과정을 사용하여 특성 추출
-        _, all_preds = self.tabpfn.predict(unique_lab, return_all_preds=True, return_features=True)
+        # TabPFN의 내부 예측을 사용하여 피처 생성
+        # 'return_all_preds'는 사용할 수 없으므로 대체 방법 사용
+        # 대신 기본 predict를 사용하고 텐서 크기 조정
+        predictions = self.tabpfn.predict(unique_lab)
         
-        # 앙상블 예측과 모든 다른 예측을 결합하여 풍부한 특성 표현 생성
-        features = all_preds.reshape(N, -1)
+        # 예측 결과를 특징으로 사용 (대체 방법)
+        # 여기서는 단순히 predictions를 복제하여 출력 크기를 맞춤
+        features = np.repeat(predictions.reshape(N, 1), self.output_dim, axis=1)
         
-        # 출력 차원에 맞게 특성 조정
-        if features.shape[1] >= self.output_dim:
-            features = features[:, :self.output_dim]
-        else:
-            # 특성 차원이 부족한 경우 패딩
-            pad_width = ((0, 0), (0, self.output_dim - features.shape[1]))
-            features = np.pad(features, pad_width, mode='constant')
+        # 출력 차원에 맞게 특성 조정 (이미 조정됨)
         
         # NumPy 배열을 텐서로 변환
         features_tensor = torch.FloatTensor(features).to(lab_values.device)
