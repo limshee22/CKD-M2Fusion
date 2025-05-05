@@ -48,7 +48,7 @@ The framework fuses **TabPFN** embeddings of handcrafted clinic/kidney features 
 |-----------|--------|-------------|
 | **Images** | `(B, S, H, W)` | `B`: batch, `S`: selected slices, `H×W`: 224×224 (after resample) |
 | **Clinical Features** | `(B, F)` | `F`: number of handcrafted variables |
-| **Targets** | `(B,)` / `(B, 1)` | baseline_cr ± CKD stage label (optional multitask) |
+| **Targets** | `(B,)` / `(B, 1)` | baseline_cr |
 
 1. Within each batch, CT slices are sorted by anatomical order.  
 2. For every patient, *per‑slice* features `v₁…v_S` are extracted, concatenated → `V_patient`.  
