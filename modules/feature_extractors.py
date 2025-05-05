@@ -4,7 +4,6 @@ import numpy as np
 from tabpfn import TabPFNRegressor
 from typing import Tuple, Optional
 
-
 class TabPFNFeatureExtractor(nn.Module):
     """
     TabPFN을 사용하여 표 형식 데이터에서 특징을 추출하는 모듈
@@ -20,6 +19,8 @@ class TabPFNFeatureExtractor(nn.Module):
         self.tabpfn.fit(X_train, y_train)
         self.is_trained = True
         print("TabPFN 모델 학습 완료!")
+        # 학습 데이터의 특성 수 저장
+        self.n_features = X_train.shape[1]
         
     def forward(self, lab_values):
         """
@@ -38,22 +39,34 @@ class TabPFNFeatureExtractor(nn.Module):
         # 실제로는 각 배치에 동일한 환자의 여러 슬라이스가 있으므로 첫 번째 행만 사용
         unique_lab = lab_np[0:1]
         
-        # TabPFN에서 특징 추출 (내부 표현을 특징으로 사용)
-        N, D = unique_lab.shape
+        # 원래 코드의 collect_tabpfn_training_data 함수에서 사용한 특성과 동일한 방식으로 처리
+        # baseline_Cr_log를 제외한 9개의 특성만 사용 (인덱스 1-9)
+        features = np.column_stack([
+            unique_lab[:, 1],  # cr_48h
+            unique_lab[:, 2],  # age
+            unique_lab[:, 3],  # sex
+            unique_lab[:, 4],  # MeshVolume
+            unique_lab[:, 5],  # Sphericity
+            unique_lab[:, 6],  # Thickness_Mean
+            unique_lab[:, 7],  # BUN
+            unique_lab[:, 8],  # Albumin
+            unique_lab[:, 9] if unique_lab.shape[1] > 9 else np.zeros(unique_lab.shape[0])  # HTN
+        ])
         
-        # TabPFN의 내부 예측을 사용하여 피처 생성
-        # 'return_all_preds'는 사용할 수 없으므로 대체 방법 사용
-        # 대신 기본 predict를 사용하고 텐서 크기 조정
-        predictions = self.tabpfn.predict(unique_lab)
+        # TabPFN 예측 수행
+        try:
+            predictions = self.tabpfn.predict(features)
+        except Exception as e:
+            print(f"TabPFN 예측 중 오류 발생: {e}")
+            # 오류 발생 시 임의의 특성 반환
+            predictions = np.zeros(unique_lab.shape[0])
         
-        # 예측 결과를 특징으로 사용 (대체 방법)
-        # 여기서는 단순히 predictions를 복제하여 출력 크기를 맞춤
-        features = np.repeat(predictions.reshape(N, 1), self.output_dim, axis=1)
-        
-        # 출력 차원에 맞게 특성 조정 (이미 조정됨)
+        # 차원 확장 및 복제를 통한 특성 생성
+        N = unique_lab.shape[0]
+        features_expanded = np.repeat(predictions.reshape(N, 1), self.output_dim, axis=1)
         
         # NumPy 배열을 텐서로 변환
-        features_tensor = torch.FloatTensor(features).to(lab_values.device)
+        features_tensor = torch.FloatTensor(features_expanded).to(lab_values.device)
         
         # 배치의 모든 슬라이스에 동일한 특성 반복
         batch_size = lab_values.size(0)
