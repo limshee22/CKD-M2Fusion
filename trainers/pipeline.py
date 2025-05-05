@@ -91,6 +91,7 @@ class TrainingPipeline:
             args=self.args, 
             pretrained_checkpoint=filtered_checkpoint, 
             out_dim=1
+            
         )
         return model, cfg
     
