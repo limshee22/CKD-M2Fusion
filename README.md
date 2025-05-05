@@ -118,7 +118,7 @@ You can download code about RadioloDINOv2ForRadiology [here](https://github.com/
 }
 ```
 
-You can read our paper explaining TabPFN [here](https://www.nature.com/articles/s41586-024-08328-6).
+You can read paper explaining TabPFN [here](https://www.nature.com/articles/s41586-024-08328-6).
 ```text
 @article{hollmann2025tabpfn,
  title={Accurate predictions on small data with a tabular foundation model},
