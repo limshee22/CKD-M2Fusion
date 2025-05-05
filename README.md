@@ -1,6 +1,6 @@
 # CKD‑M2Fusion: Multi‑Modal Transformer Framework for Chronic Kidney Disease Staging via Serum Creatinine Regression
 
-CKD‑M2Fusion combines *structured clinical data* with *kidney‑focused CT images* to jointly predict baseline serum creatinine (baseline_cr) and automatically assign Chronic Kidney Disease (CKD) stages.  
+CKD‑M2Fusion fuses structured clinical data with *kidney‑focused CT images* to regress baseline serum creatinine (baseline_cr).
 The framework fuses **TabPFN** embeddings of handcrafted clinic/kidney features with **Radiology‑Fortified DINOv2 ViT‑Base** image representations, enabling end‑to‑end multi‑modal learning that is data‑efficient and readily extensible.
 
 ---
@@ -18,9 +18,7 @@ The framework fuses **TabPFN** embeddings of handcrafted clinic/kidney features 
 3. **Feature Fusion & Prediction**
    - Slice‑wise visual features are concatenated (or mean‑pooled) to form a single visual descriptor per patient.  
    - The visual descriptor is concatenated with the TabPFN clinical embedding.  
-   - A lightweight MLP head outputs:
-     1. **Regression:** baseline_cr (mg/dL)  
-     2. **Classification:** CKD stage (KDIGO 1‑5) via thresholded eGFR or direct softmax
+   - A lightweight MLP head outputs the regressed baseline_cr (mg/dL).
 
 ---
 
@@ -37,9 +35,6 @@ The framework fuses **TabPFN** embeddings of handcrafted clinic/kidney features 
 
 4. **End‑to‑End Multi‑Modal Learning**  
    - Single optimizer updates both branches and the fusion head, preserving modality‑specific nuances while learning synergistic representations.
-
-5. **Flexible Output Modes**  
-   - Supports pure regression (baseline_cr), pure classification (CKD stage), or joint multitask training with weighted losses.
 
 ---
 
@@ -100,4 +95,49 @@ python main.py \
 
 
 
+## 📚 Citing
+If you use this repository in your work, please consider citing the following.
 
+You can download code about RadioloDINOv2ForRadiology [here](https://github.com/MohammedSB/DINOv2ForRadiology/tree/main).
+```text
+@misc{baharoon2023general,
+      title={Towards General Purpose Vision Foundation Models for Medical Image Analysis: An Experimental Study of DINOv2 on Radiology Benchmarks}, 
+      author={Mohammed Baharoon and Waseem Qureshi and Jiahong Ouyang and Yanwu Xu and Abdulrhman Aljouie and Wei Peng},
+      year={2023},
+      eprint={2312.02366},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+@misc{oquab2023dinov2,
+      title={DINOv2: Learning Robust Visual Features without Supervision}, 
+      author={Maxime Oquab and Timothée Darcet and Théo Moutakanni and Huy Vo and Marc Szafraniec and Vasil Khalidov and Pierre Fernandez and Daniel Haziza and Francisco Massa and Alaaeldin El-Nouby and Mahmoud Assran and Nicolas Ballas and Wojciech Galuba and Russell Howes and Po-Yao Huang and Shang-Wen Li and Ishan Misra and Michael Rabbat and Vasu Sharma and Gabriel Synnaeve and Hu Xu and Hervé Jegou and Julien Mairal and Patrick Labatut and Armand Joulin and Piotr Bojanowski},
+      year={2023},
+      eprint={2304.07193},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+```
+
+```text
+You can read our paper explaining TabPFN [here](https://www.nature.com/articles/s41586-024-08328-6).
+@article{hollmann2025tabpfn,
+ title={Accurate predictions on small data with a tabular foundation model},
+ author={Hollmann, Noah and M{\"u}ller, Samuel and Purucker, Lennart and
+         Krishnakumar, Arjun and K{\"o}rfer, Max and Hoo, Shi Bin and
+         Schirrmeister, Robin Tibor and Hutter, Frank},
+ journal={Nature},
+ year={2025},
+ month={01},
+ day={09},
+ doi={10.1038/s41586-024-08328-6},
+ publisher={Springer Nature},
+ url={https://www.nature.com/articles/s41586-024-08328-6},
+}
+
+@inproceedings{hollmann2023tabpfn,
+  title={TabPFN: A transformer that solves small tabular classification problems in a second},
+  author={Hollmann, Noah and M{\"u}ller, Samuel and Eggensperger, Katharina and Hutter, Frank},
+  booktitle={International Conference on Learning Representations 2023},
+  year={2023}
+}
+```
