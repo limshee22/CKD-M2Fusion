@@ -46,23 +46,17 @@ class RegressionHead(nn.Module):
 
 
 class FusionModel(nn.Module):
-    """DINOv2와 TabPFN 특징을 융합하는 모델"""
-    def __init__(
-        self, 
-        base_model: nn.Module, 
-        feature_dim: int = 768, 
-        tabpfn_dim: int = 64, 
-        num_slices: int = 16, 
-        hidden_dim: int = 1024, 
-        out_dim: int = 1
-    ):
-        super().__init__()
+    """
+    DINOv2와 TabPFN 특징을 융합하는 모델
+    """
+    def __init__(self, base_model, feature_dim=768, tabpfn_dim=64, num_slices=16, hidden_dim=1024, out_dim=1):
+        super(FusionModel, self).__init__()
         self.base_model = base_model  # DINOv2 backbone
         self.feature_dim = feature_dim
         self.num_slices = num_slices
         self.is_training = True  # DINOv2 학습 상태 플래그
         
-        # TabPFN 특징 추출기는 feature_extractors.py에서 임포트
+        # TabPFN 특징 추출기
         from .feature_extractors import TabPFNFeatureExtractor
         self.tabpfn_extractor = TabPFNFeatureExtractor(output_dim=tabpfn_dim)
         
@@ -83,60 +77,28 @@ class FusionModel(nn.Module):
             dropout_rate=0.5
         )
 
-    def train(self, mode: bool = True) -> nn.Module:
-        """
-        학습 모드 설정 메서드
-        
-        Args:
-            mode: 학습 모드 여부
-            
-        Returns:
-            self 인스턴스
-        """
-        super().train(mode)
-        self.is_training = mode
-        return super().train(mode)
+    # 수정된 train 메서드: mode 파라미터를 받도록 변경
+    def train(self, mode: bool = True):
+        """DINOv2( base_model )는 is_train 플래그만,
+        나머지 서브모듈은 표준 Module.train(mode) 사용"""
+        self.is_training = mode                # 우리 자체 플래그
+        self.base_model.is_train = mode        # ← DINOv2 방식
+
+        # 나머지 서브모듈만 정상적으로 recursion
+        self.feature_projection.train(mode)
+        self.regression_head.train(mode)
+        self.tabpfn_extractor.train(mode)      # 특별히 학습 안 하지만 일관성 유지
+        return self
+
+    def eval(self):
+        """eval() 역시 base_model 은 is_train 플래그만 조정"""
+        return self.train(False)
     
-    def eval(self) -> nn.Module:
-        """
-        평가 모드 설정 메서드
-        
-        Returns:
-            self 인스턴스
-        """
-        super().eval()
-        self.is_training = False
-        return super().eval()
-    
-    def fit_tabpfn(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
-        """
-        TabPFN 특징 추출기 학습 메서드
-        
-        Args:
-            X_train: 학습 특징 데이터
-            y_train: 학습 타겟 데이터
-        """
+    def fit_tabpfn(self, X_train, y_train):
+        """TabPFN 특징 추출기 학습"""
         self.tabpfn_extractor.fit(X_train, y_train)
         
-    def forward(
-        self, 
-        images: torch.Tensor, 
-        lab_values: Optional[torch.Tensor] = None, 
-        patient_ids: Optional[List[str]] = None, 
-        slice_indices: Optional[torch.Tensor] = None
-    ) -> torch.Tensor:
-        """
-        순전파 메서드
-        
-        Args:
-            images: 이미지 텐서 [batch_size, 3, H, W]
-            lab_values: 임상 데이터 텐서 [batch_size, 10]
-            patient_ids: 환자 ID 리스트
-            slice_indices: 슬라이스 인덱스 텐서
-            
-        Returns:
-            회귀 출력 텐서
-        """
+    def forward(self, images, lab_values=None, patient_ids=None, slice_indices=None):
         batch_size = images.size(0)
         features_list = []
         

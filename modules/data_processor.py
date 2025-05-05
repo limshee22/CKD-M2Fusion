@@ -33,15 +33,30 @@ class DataProcessor:
             # 대상 값과 특징 분리
             # baseline_Cr_log를 대상으로 설정 (인덱스 0)
             features = np.column_stack([
-                unique_lab[:, 1],  # cr_48h
-                unique_lab[:, 2],  # age
-                unique_lab[:, 3],  # sex
-                unique_lab[:, 4],  # MeshVolume
-                unique_lab[:, 5],  # Sphericity
-                unique_lab[:, 6],  # Thickness_Mean
-                unique_lab[:, 7],  # BUN
-                unique_lab[:, 8],  # Albumin
-                unique_lab[:, 9],  # HTN
+                unique_lab[:, 1],  # SEX
+                unique_lab[:, 2],  # AGE
+                unique_lab[:, 3],  # BMI
+                unique_lab[:, 4],  # BUN
+                unique_lab[:, 5],  # Hb
+                unique_lab[:, 6],  # Albumin
+                unique_lab[:, 7],  # P
+                unique_lab[:, 8],  # Ca
+                unique_lab[:, 9],  # tCO2
+                unique_lab[:, 10],  # K
+                unique_lab[:, 11],  # Cr_48_log
+                unique_lab[:, 12],  # original_shape_SurfaceVolumeRatio
+                unique_lab[:, 13],  # original_shape_Sphericity
+                unique_lab[:, 14],  # original_shape_Maximum3DDiameter
+                unique_lab[:, 15],  # original_shape_Maximum2DDiameterColumn
+                unique_lab[:, 16],  # original_shape_MinorAxisLength
+                unique_lab[:, 17],  # original_shape_LeastAxisLength
+                unique_lab[:, 18],  # original_shape_Elongation
+                unique_lab[:, 19],  # original_shape_Flatness
+                unique_lab[:, 20],  # local_thickness_mean
+                unique_lab[:, 21],  # convexity_ratio_area
+                unique_lab[:, 22],  # convexity_ratio_vol
+                unique_lab[:, 23],  # original_shape_MeshVolume
+
             ])
             
             targets = unique_lab[:, 0]  # baseline_Cr_log
