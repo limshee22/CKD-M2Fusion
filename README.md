@@ -67,8 +67,9 @@ Batch 1:
 
 - Patient B: ...
 
+---
 
-### Installation
+### ⚙️ Installation
 ```text
 git clone https://github.com/limshee22/CKD-M2Fusion.git
 pip install -r requirements.txt
