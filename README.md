@@ -66,13 +66,37 @@ Batch 1:
     · Fusion: concat([A1 … AN] , tab_A) ➜ MLP ➜ baseline_cr_A
 
 - Patient B: ...
-
+```
 ---
 
-### ⚙️ Installation
+## ⚙️ Installation
 ```text
 git clone https://github.com/limshee22/CKD-M2Fusion.git
 pip install -r requirements.txt
+```
+
+---
+
+## ⚙️ Starting
+```text
+python main.py \
+    --train_csv ./Data/train.csv \
+    --test_csv ./Data/test.csv \
+    --pretrained_weights model_final.pth \
+    --batch_size 32 \
+    --target_slices 32 \
+    --epochs 100 \
+    --lr 1e-4 \
+    --weight_decay 1e-4 \
+    --early_stopping 10 \
+    --log_interval 10 \
+    --checkpoint_dir ./checkpoint \
+    --log_dir ./logs \
+    --results_dir ./result \
+    --seed 42 \
+    --tabpfn_dim 64 \
+```
+
 
 
 
